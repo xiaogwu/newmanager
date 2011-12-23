@@ -1,0 +1,147 @@
+Script started on Thu Dec  1 16:47:38 2011
+xwu77@hills:~/cs160b/asmt03$ #*** Assignment Three - Xiao G. Wu
+xwu77@hills:~/cs160b/asmt03$ 
+xwu77@hills:~/cs160b/asmt03$ date
+Thu Dec  1 16:48:09 PST 2011
+xwu77@hills:~/cs160b/asmt03$ pwd
+/students/xwu77/cs160b/asmt03
+xwu77@hills:~/cs160b/asmt03$ id
+uid=27119(xwu77) gid=581(b20107) groups=7069(c71768),7071(c71770),7192(c73577)
+xwu77@hills:~/cs160b/asmt03$ ./newmanager
+Enter Department ID (Press Enter to quit):5
+Enter Department Name:Garbage Collection
+Enter Manager Name:Terry Trash
+Enter Manager ID:5433
+Department '5' added...
+Enter Department ID (Press Enter to quit):
+Quitting...
+
+
+Here is the sorted resulting file 'Managers':
+=================================================
+Jane Scientist:14:1:Research and Development
+Charlie Ceo:1:3:Office of the President
+Sally Sliderule:622:4:Engineering
+Terry Trash:5433:5:Garbage Collection
+Lawrence Friendly:833:7:Administration
+Joe Worker:489:14:Manufacturing
+Mary Money:893:17:Payroll
+Mary Mailwoman:17:45:Shipping and Receiving
+Mr. Ed:5:50:Health
+Jeri Juntz:552:77:Maintenance
+Sammy Screw:78:98:Assembly
+Joe Piscipo:4532:200:Quality Assurance
+
+
+xwu77@hills:~/cs160b/asmt03$ ./newmanager
+Enter Department ID (Press Enter to quit):777
+Enter Department Name:Office of UNIX
+Enter Manager Name:Linus Torvalds
+Enter Manager ID:455
+Department '777' added...
+Enter Department ID (Press Enter to quit):
+Quitting...
+
+
+Here is the sorted resulting file 'Managers':
+=================================================
+Jane Scientist:14:1:Research and Development
+Charlie Ceo:1:3:Office of the President
+Sally Sliderule:622:4:Engineering
+Terry Trash:5433:5:Garbage Collection
+Lawrence Friendly:833:7:Administration
+Joe Worker:489:14:Manufacturing
+Mary Money:893:17:Payroll
+Mary Mailwoman:17:45:Shipping and Receiving
+Mr. Ed:5:50:Health
+Jeri Juntz:552:77:Maintenance
+Sammy Screw:78:98:Assembly
+Joe Piscipo:4532:200:Quality Assurance
+Linus Torvalds:455:777:Office of UNIX
+
+
+xwu77@hills:~/cs160b/asmt03$ ./newmanager
+Enter Department ID (Press Enter to quit):5
+newmanager: ERROR: Department ID '5' is already in 'Managers'
+Current Manager Name: Terry Trash
+Current Manager ID: 5433
+Current Department ID: 5
+Current Department Name: Garbage Collection
+Update this entry (y/n)?y
+Enter Department Name:Refuse Collection
+Enter Manager Name:Terry Refuse
+Enter Manager ID:5433
+Department '5' updated...
+Enter Department ID (Press Enter to quit):
+Quitting...
+
+
+Here is the sorted resulting file 'Managers':
+=================================================
+Jane Scientist:14:1:Research and Development
+Charlie Ceo:1:3:Office of the President
+Sally Sliderule:622:4:Engineering
+Terry Refuse:5433:5:Refuse Collection
+Lawrence Friendly:833:7:Administration
+Joe Worker:489:14:Manufacturing
+Mary Money:893:17:Payroll
+Mary Mailwoman:17:45:Shipping and Receiving
+Mr. Ed:5:50:Health
+Jeri Juntz:552:77:Maintenance
+Sammy Screw:78:98:Assembly
+Joe Piscipo:4532:200:Quality Assurance
+Linus Torvalds:455:777:Office of UNIX
+
+
+xwu77@hills:~/cs160b/asmt03$ ./newmanager
+Enter Department ID (Press Enter to quit):5
+newmanager: ERROR: Department ID '5' is already in 'Managers'
+Current Manager Name: Terry Refuse
+Current Manager ID: 5433
+Current Department ID: 5
+Current Department Name: Refuse Collection
+Update this entry (y/n)?NO
+Enter Department ID (Press Enter to quit):Not an integer
+newmanager: ERROR: not a positive integer try again
+Enter Department ID (Press Enter to quit):00043443
+newmanager: ERROR: integer cannot start with zero
+Enter Department ID (Press Enter to quit):777
+newmanager: ERROR: Department ID '777' is already in 'Managers'
+Current Manager Name: Linus Torvalds
+Current Manager ID: 455
+Current Department ID: 777
+Current Department Name: Office of UNIX
+Update this entry (y/n)?YES
+Enter Department Name:Office of LINUX
+Enter Manager Name:Linus:Torvalds
+newmanager: ERROR: name cannot contain a ':' character
+Enter Manager Name:Linus Torvalds
+Enter Manager ID:Not and ID
+newmanager: ERROR: not a positive integer try again
+Enter Manager ID:455
+Department '777' updated...
+Enter Department ID (Press Enter to quit):
+Quitting...
+
+
+Here is the sorted resulting file 'Managers':
+=================================================
+Jane Scientist:14:1:Research and Development
+Charlie Ceo:1:3:Office of the President
+Sally Sliderule:622:4:Engineering
+Terry Refuse:5433:5:Refuse Collection
+Lawrence Friendly:833:7:Administration
+Joe Worker:489:14:Manufacturing
+Mary Money:893:17:Payroll
+Mary Mailwoman:17:45:Shipping and Receiving
+Mr. Ed:5:50:Health
+Jeri Juntz:552:77:Maintenance
+Sammy Screw:78:98:Assembly
+Joe Piscipo:4532:200:Quality Assurance
+Linus Torvalds:455:777:Office of LINUX
+
+
+xwu77@hills:~/cs160b/asmt03$ exit
+exit
+
+script done on Thu Dec  1 16:59:44 2011

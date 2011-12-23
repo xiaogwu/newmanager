@@ -1,0 +1,28 @@
+This script interactively prompts a user for Department Manager
+information maintaining Department ID as a unique key.
+
+This script takes no options or arguments.  User input is 
+interactive with the script prompting for Department ID and name, 
+Manager name and ID.
+
+To execute the script type ./newmanager
+
+This script outputs the Managers file showing a Department Manager 
+list sorted by ascending Department ID.  It initially checks the 
+current directory for a 'Managers' file.  If found it will use
+this file to store Department Manager information.  If the file
+is not found, it will copy it from one of two locations depending
+on if the script is run on the linux environment or on hills.
+
+If the user enters a Department ID that already exists in the 
+Managers file, it will display the existing Department Manager 
+information for review and prompt the user to confirm they want
+update the Managers file. This script confirms when asking for an
+ID, to make sure it is an integer that was entered.  Also when 
+prompting for a Name, it makes sure a ':' character is not included
+in the input.
+
+The format of the Managers file:
+Manager Name:ManagerID:DeptID:Dept Name
+
+This script uses error() and fatal() functions provided by Greg Boyed.

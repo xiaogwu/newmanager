@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+#
+# This script interactively prompts a user for Department Manager
+# information maintaining Department ID as a unique key.
+#
+# This script takes no options or arguments.  User input is 
+# interactive with the script prompting for Department ID and name, 
+# Manager name and ID.
+#
+# To execute the script type ./newmanager
+#
+# This script outputs the Managers file showing a Department Manager 
+# list sorted by ascending Department ID.  It initially checks the 
+# current directory for a 'Managers' file.  If found it will use
+# this file to store Department Manager information.  If the file
+# is not found, it will copy it from one of two locations depending
+# on if the script is run on the linux environment or on hills.
+#
+# If the user enters a Department ID that already exists in the 
+# Managers file, it will display the existing Department Manager 
+# information for review and prompt the user to confirm they want
+# update the Managers file. This script confirms when asking for an
+# ID, to make sure it is an integer that was entered.  Also when 
+# prompting for a Name, it makes sure a ':' character is not included
+# in the input.
+#
+# The format of the Managers file:
+#   Manager Name:ManagerID:DeptID:Dept Name
+#
+# This script uses error() and fatal() functions provided by Greg Boyed.
+#
+   
+# Functions
+error () {
+    # error: output an error message and return
+    # the error messages contain the program name
+    # and are written to standard error
+
+    local prog=$(basename $0)
+    echo -e "$prog: ERROR: $*">&2
+}
+
+fatal () {
+    # fatal: output an error message and then exit
+    # the error () function is used.
+    error "$*"
+    # now exit with an error
+    exit 1
+}
+
+int_prompt() {
+    local i_input
+    while true; do
+        read -p "$1" i_input
+        # Check for quit condition
+        [ "$i_input" = "" ] && echo "" && break
+        if ! echo "$i_input" | grep "^[1-9][0-9]*$" > /dev/null; then
+            if echo "$i_input" | grep "^00*" > /dev/null; then
+                error "integer cannot start with zero"
+                continue
+            fi
+            error "not a positive integer try again" 
+            continue
+        fi
+        break
+    done
+    echo "$i_input" 
+}
+
+yn_prompt() {
+    local ans
+    while true; do
+        read -p "$1" ans
+        case "$ans" in
+            Yes|YES|y|Y|yes) return 0;;
+            No|NO|n|N|no) return 1;;
+            *) error "please re-enter (y/n)"
+        esac
+    done
+}
+
+name_prompt() {
+    local name
+    while true; do
+        read -p "$1" name
+        if echo "$name" | grep ':' > /dev/null; then
+            error "name cannot contain a ':' character"    
+            continue
+        fi
+        break
+    done
+    echo "$name"
+}
+# filename for Managers file, change if desired
+mngrs_file=Managers
+
+# Check if a local copy of the Managers file exists, if not copy from remote directory
+if [ ! -e "$mngrs_file" ]; then
+    # Determine path to Manager file based on env
+    if uname | grep -qi linux; then
+        source_dir=/home/pub/cs160bgb/asmt03
+    else
+        source_dir=/pub/cs/gboyd/cs160b/asmt03
+    fi
+    # Remote location of Managers file
+    mngrs_file="$source_dir/$mngrs_file"
+    # Check to see if remote Managers file exists and is readable
+    ! [ -e "$mngrs_file" -a -r "$mngrs_file" ] && fatal "'$mngrs_file' file is not readable or unavailable"
+    # Copy remote Managers file
+    if ! cp "$mngrs_file" . 2>/dev/null; then
+        fatal "cannot copy '$mngrs_file' file from '$source_dir'"
+    fi
+    # path to temp location, change if desired
+    export TMPDIR=/tmp
+    # After copying from remote Managers file, reset Managers file to local copy
+    mngrs_file="$(basename $mngrs_file)"
+else
+    # Managers file already exists, use local copy 
+    # Check local Manager file is readable and writable
+    ! [ -f "./$mngrs_file" -a -r "./$mngrs_file" -a -w "./$mngrs_file" ] && fatal "'$mngrs_file' file is not a readable, writable file"
+fi
+# Prompt user for department #
+while true; do
+    dep_id=$(int_prompt "Enter Department ID (Press Enter to quit):")
+    # [ "$dep_id" = "" ] && echo "Quitting..." && break
+    [ -z "$dep_id" ] && echo "Quitting..." && break
+    # Check to see if department ID already exists, if so display department information 
+    if finding=$(grep "^[^:]*:[^:]*:$dep_id:[^:]*$" "./$mngrs_file"); then
+        error "Department ID '$dep_id' is already in '$mngrs_file'"
+        # Create tmp file of current Department Manager
+        CURRENT_MGR=$(mktemp); touch "$CURRENT_MGR"
+        echo "$finding" > $CURRENT_MGR
+        # Tokenize on deliminator ':'
+        OIFS="$IFS"
+        IFS=:
+        # Display current Department Manager information to user for review
+        read m_name m_id d_id d_name < $CURRENT_MGR
+        echo "Current Manager Name: $m_name"
+        echo "Current Manager ID: $m_id"
+        echo "Current Department ID: $d_id"
+        echo "Current Department Name: $d_name"
+        # Restore default deliminators
+        IFS="$OIFS"
+        if $(yn_prompt "Update this entry (y/n)?"); then
+            # Create tmp new Managers file
+            NEW_MGR_FILE=$(mktemp); touch "$NEW_MGR_FILE"
+            # Create new Managers file WITHOUT the current manager
+            grep -v "$(cat "$CURRENT_MGR")" "./$mngrs_file" > "$NEW_MGR_FILE"
+            mv "$NEW_MGR_FILE" "./$mngrs_file"
+            # Don't ask user for Department ID again, use existing ID
+            dep_name=$(name_prompt "Enter Department Name:")
+            mgr_name=$(name_prompt "Enter Manager Name:")
+            mgr_id=$(int_prompt "Enter Manager ID:")
+            # Add new entry to Managers file
+            echo "$mgr_name:$mgr_id:$dep_id:$dep_name" >> "./$mngrs_file"
+            echo "Department '"$dep_id"' updated..." >&2
+            # Remove tmp files
+            rm -f "$CURRENT_MGR" >&2
+            rm -f "$NEW_MGR_FILE" >&2
+        fi
+        continue
+    fi
+    # If department # doesn't exist, prompt user for manager's name, manager's id, and department name and append to Managers file
+    dep_name=$(name_prompt "Enter Department Name:")
+    mgr_name=$(name_prompt "Enter Manager Name:")
+    mgr_id=$(int_prompt "Enter Manager ID:")
+    echo "$mgr_name:$mgr_id:$dep_id:$dep_name" >> "./$mngrs_file"
+    echo "Department '"$dep_id"' added..." >&2
+done
+# Sort Managers file in place
+sort -o "./$mngrs_file" -t: -k3n "./$mngrs_file"
+# Print sorted Managers file 
+echo -e "\n"
+echo "Here is the sorted resulting file '$mngrs_file':"
+echo "================================================="
+cat "./$mngrs_file"
+echo -e "\n"
+exit 0
